@@ -340,3 +340,9 @@ github.com
 github.com
 . This self-hosted setup demonstrates the core idea: an AI agent can operate a GUI-based computer autonomously, and now you have full control to extend or customize it on your own machine. Enjoy your E2B-inspired AI desktop agent!
 
+
+## License
+This project is licensed under the [MIT License](LICENSE).
+
+## Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
