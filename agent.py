@@ -17,7 +17,7 @@ LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4")
 LLM_API_KEY = os.getenv("LLM_API_KEY")
 
 # VNC connection information
-VNC_SERVER = os.getenv("VNC_SERVER", "sandbox::5901")
+VNC_SERVER = os.getenv("VNC_SERVER", "sandbox::5900")
 VNC_PASSWORD = os.getenv("VNC_PASSWORD", "password")
 
 logging.basicConfig(level=logging.INFO)
