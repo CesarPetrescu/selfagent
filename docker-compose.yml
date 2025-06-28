@@ -1,0 +1,48 @@
+version: '3'
+services:
+  sandbox:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sandbox
+    ports:
+      - "5900:5900"
+      - "6080:6080"
+    environment:
+      - VNC_PASSWORD=${VNC_PASSWORD:-password}
+    networks:
+      - ai_desktop_net
+    volumes:
+      - ./sandbox-data:/home
+
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    container_name: agent
+    depends_on:
+      - sandbox
+    environment:
+      - LLM_API_BASE_URL=${LLM_API_BASE_URL}
+      - LLM_MODEL=${LLM_MODEL}
+      - LLM_API_KEY=${LLM_API_KEY}
+      - VNC_PASSWORD=${VNC_PASSWORD:-password}
+    networks:
+      - ai_desktop_net
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: frontend
+    depends_on:
+      - sandbox
+      - agent
+    networks:
+      - ai_desktop_net
+    ports:
+      - "8080:80"
+
+networks:
+  ai_desktop_net:
+    driver: bridge

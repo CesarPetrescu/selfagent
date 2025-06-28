@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head><title>AI Desktop Agent</title></head>
+<body>
+  <h2>LLM Desktop Agent Interface</h2>
+  <!-- Video feed via noVNC iframe -->
+  <div style="border:1px solid #ccc; width: 1280px; height: 720px;">
+    <iframe src="http://sandbox:6080/vnc.html?autoconnect=true&password=password" width="1280" height="720" frameborder="0"></iframe>
+  </div>
+  <!-- Chat controls -->
+  <div>
+    <input type="text" id="userInput" placeholder="Type your instruction..." size="50">
+    <button onclick="sendPrompt()">Send</button>
+  </div>
+  <pre id="chatLog" style="background:#f0f0f0; padding:10px; width:600px; height:200px; overflow:auto;"></pre>
+  <script>
+    function appendToLog(role, text) {
+      const log = document.getElementById('chatLog');
+      log.textContent += role + ": " + text + "\n";
+      log.scrollTop = log.scrollHeight;
+    }
+    async function sendPrompt() {
+      const inputEl = document.getElementById('userInput');
+      const prompt = inputEl.value;
+      if(prompt.trim() === "") return;
+      appendToLog("User", prompt);
+      inputEl.value = "";
+      try {
+        const res = await fetch('http://agent:5000/api/chat', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ prompt: prompt })
+        });
+        const data = await res.json();
+        if(data.reply) {
+          appendToLog("Agent", data.reply);
+        } else {
+          appendToLog("Agent", "(No response)");
+        }
+      } catch(err) {
+        appendToLog("Error", "Failed to send prompt: " + err);
+      }
+    }
+  </script>
+</body>
+</html>
