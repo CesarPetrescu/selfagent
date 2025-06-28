@@ -14,12 +14,13 @@ This project recreates the idea of [E2B's Desktop Sandbox](https://e2b.dev) enti
 
 - Linux host with Docker and Docker Compose
 - Access to an OpenAI-compatible API
-- A `.env` file containing credentials:
+- Copy `.env.example` to `.env` and fill in your credentials:
 
 ```bash
 LLM_API_BASE_URL="http://192.168.10.142:80/v1"
 LLM_MODEL="gpt-4-vision"
 LLM_API_KEY="YOUR_API_BEARER_TOKEN"
+VNC_PASSWORD="password"
 ```
 
 ## Step 1: Build the GUI Sandbox
@@ -44,14 +45,14 @@ CMD ["/start.sh"]
 
 ```bash
 #!/bin/bash
-export DISPLAY=:1
-Xvfb :1 -screen 0 1280x720x24 &
+export DISPLAY=:0
+Xvfb :0 -screen 0 1280x720x24 &
 startxfce4 &
 sleep 2
 echo "$VNC_PASSWORD" | vncpasswd -f > /root/.vnc/passwd
 chmod 600 /root/.vnc/passwd
-tigervncserver -geometry 1280x720 :1
-websockify --web=/usr/share/novnc/ --prefer-ipv4 6080 localhost:5901
+tigervncserver -geometry 1280x720 :0
+websockify --web=/usr/share/novnc/ --prefer-ipv4 6080 localhost:5900
 ```
 
 Add the service to `docker-compose.yml`:
@@ -69,6 +70,9 @@ services:
     networks:
       - ai_desktop_net
 ```
+
+The sandbox exposes its VNC server on port `5900`. Use a VNC client or the
+provided noVNC interface on port `6080` to view the desktop.
 
 ## Step 2: Build the Agent
 
@@ -192,6 +196,10 @@ docker-compose up -d --build
 ```
 
 After a short wait, open [http://<your-host>:8080](http://<your-host>:8080) and interact with the agent through the chat box while watching the sandboxed desktop.
+
+## License
+
+This project is released under the [MIT License](LICENSE).
 
 ## Conclusion
 
